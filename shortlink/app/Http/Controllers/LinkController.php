@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Auth;
 use App\User;
 use App\Link;
+use App\Stat;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Cookie;
+
+use Stevebauman\Location\Facades\Location;
 
 class LinkController extends Controller
 {
@@ -39,13 +42,18 @@ class LinkController extends Controller
         $is_url = filter_var($url, FILTER_VALIDATE_URL) !== false;
         if (!$is_url) {
             Session::flash('error', 'Wrong url');
-            return Redirect::back()->withInput($data);
+            return Redirect::back();
         }
 
         Input::merge(['user_id' => auth()->user()->id]);
-        $result = Link::create(Input::all());
+        $link = Link::create(Input::all());
 
-        return Redirect::back()->withInput($data);
+        if (empty($link->short)) {
+            $link->short = str_random(8);
+            $link->save();
+        }
+
+        return Redirect::back();
     }
 
     public function redirect($code)
@@ -53,11 +61,25 @@ class LinkController extends Controller
         $link = Link::where('short', $code)->first();
 
         if ($link) {
+            $position = Location::get();
+            if ($position) {
+                $stat = Stat::firstOrCreate(['link_id' => $link->id, 'country' => $position->countryCode], ['count' => 0]);
+                $stat->count = $stat->count + 1;
+                $stat->save();
+            }
+
             return Redirect::to($link->full);
         } else {
             Session::flash('error', 'Wrong url');
             return redirect()->route('home');
         }
+    }
+
+    public function stats(Link $link)
+    {
+        $stats = $link->stats;
+        
+        return view('stats', compact('stats', 'link'));
     }
 }
 
