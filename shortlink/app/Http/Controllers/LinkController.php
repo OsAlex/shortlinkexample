@@ -45,6 +45,12 @@ class LinkController extends Controller
             return Redirect::back();
         }
 
+        $stoped_at = Input::has('stoped_at') ? Input::get('stoped_at') : false;
+        if ($stoped_at) {
+            $stoped_at = Carbon::createFromFormat('d.m.Y H:i', $stoped_at);
+            Input::merge(['stoped_at' => $stoped_at]);
+        }
+
         Input::merge(['user_id' => auth()->user()->id]);
         $link = Link::create(Input::all());
 
@@ -61,6 +67,12 @@ class LinkController extends Controller
         $link = Link::where('short', $code)->first();
 
         if ($link) {
+
+            if (!empty($link->stoped_at) && $link->stoped_at > Carbon::now()) {
+                Session::flash('error', 'Lifetime of url is end');
+                return redirect()->route('home');
+            }
+
             $position = Location::get();
             if ($position) {
                 $stat = Stat::firstOrCreate(['link_id' => $link->id, 'country' => $position->countryCode], ['count' => 0]);

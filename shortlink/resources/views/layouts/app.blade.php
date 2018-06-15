@@ -14,10 +14,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
     <!-- Styles -->
-    <link rel="stylesheet" type="text/css" href="{{ voyager_asset('css/style.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ voyager_asset('css/themes/flat-green.css') }}">
-    @yield('headcontent')
-    <link rel="stylesheet" href="{{ voyager_asset('fonts/voyager/styles.css') }}">
+    @stack('headcontent')
     <link href="{{ mix('css/external.css') }}" rel="stylesheet">
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
     @stack('style')

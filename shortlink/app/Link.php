@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Link extends Model
 {
-    public $fillable = ['full', 'short', 'user_id', 'count'];
+    public $fillable = ['full', 'short', 'user_id', 'count', 'stoped_at'];
 
     const RULES = [
-        'full'        => 'required|url',
-        'short'       => 'sometimes|unique:links',
+        'full'          => 'required|url',
+        'short'         => 'sometimes|unique:links',
+        'stoped_at'     => 'sometimes|date'
     ];
 
 
