@@ -30,8 +30,8 @@ class User extends \TCG\Voyager\Models\User
     /**
      * Get the comments that owns the user.
      */
-    public function links() {
+    public function links()
+    {
         return $this->hasMany('App\Link', 'user_id', 'id')->orderBy('created_at', 'desc');
     }
-
 }

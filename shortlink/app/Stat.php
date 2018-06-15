@@ -11,8 +11,8 @@ class Stat extends Model
     /**
     * return user
     */
-    public function link() {
+    public function link()
+    {
         return $this->hasOne('App\Link', 'id', 'link_id');
     }
-
 }

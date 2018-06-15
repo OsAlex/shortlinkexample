@@ -67,7 +67,6 @@ class LinkController extends Controller
         $link = Link::where('short', $code)->first();
 
         if ($link) {
-
             if (!empty($link->stoped_at) && $link->stoped_at > Carbon::now()) {
                 Session::flash('error', 'Lifetime of url is end');
                 return redirect()->route('home');
@@ -94,4 +93,3 @@ class LinkController extends Controller
         return view('stats', compact('stats', 'link'));
     }
 }
-

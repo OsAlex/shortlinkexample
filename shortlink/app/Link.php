@@ -18,15 +18,16 @@ class Link extends Model
     /**
     * return user
     */
-    public function owner() {
+    public function owner()
+    {
         return $this->hasOne('App\User', 'id', 'user_id');
     }
 
     /**
     * return user
     */
-    public function stats() {
+    public function stats()
+    {
         return $this->hasMany('App\Stat', 'link_id', 'id');
     }
-
 }
